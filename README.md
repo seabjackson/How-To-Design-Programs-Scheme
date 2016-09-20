@@ -14,14 +14,11 @@ The HtDF recipe consists of the following steps:
 HOW TO DESIGN DATA (HTDD)
 
 Data definitions are a driving element in the design recipes.
-
 A data definition establishes the represent/interpret relationship between information and data:
-
 Information in the program's domain is represented by data in the program.
 Data in the program can be interpreted as information in the program's domain.
 
 The first step of the recipe is to identify the inherent structure of the information.
-
 Once that is done, a data definition consists of four or five elements:
 
 1. A possible structure definition (not until compound data)
