@@ -21,4 +21,7 @@
 
 ;3) IMAGE1 has both the same width AND height as IMAGE2
 
-(and (= (image-width IMAGE1) (image-width IMAGE2) (image-height IMAGE1) (image-height IMAGE2))
+(and (= (image-width IMAGE1)
+        (image-width IMAGE2))
+     (= (image-height IMAGE1)
+        (image-height IMAGE2)))
