@@ -2,13 +2,12 @@
 ;; about the language level of this file in a form that our tools can easily process.
 #reader(lib "htdp-beginner-reader.ss" "lang")((modname demolish) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 
-;; demolish.rkt
+;; demolish
 
 ;; =================
 ;; Data definitions:
 
-;PROBLEM A:
-;
+
 ;You are assigned to develop a system that will classify 
 ;buildings in downtown Vancouver based on how old they are. 
 ;According to city guidelines, there are three different classification levels:
@@ -17,51 +16,55 @@
 ;Design a data definition to represent these classification levels. 
 ;Call it BuildingStatus.
 
-;A possible structure definition (not until compound data)
-;A type comment that defines a new type name and describes how to form data of that type.
-;An interpretation that describes the correspondence between information and data.
-;One or more examples of the data.
-;A template for a 1 argument function operating on data of this type.
-
-
 ;; BuildingStatus is one of:
-;; - "new"
-;; - "old"
-;; - "heritage"
-;;  interp. "new" means the building is new
-;; "old" means the building is old
-;; "heritage" means it is a heritage building
+; - "new"
+; - "old"
+; - "heritage"
 
+;; interp. the classification level of a building based on its age
+; - "new" means the building is new
+; - "old" means the building is old
+; - "heritage" means the building is a heritage symbol
 ;; <examples are redundant for enumeration>
 
 #;
-(define (BuildingStatus bs)
-  (cond [(string=? "new" bs) (...)]
-        [(string=? "old" bs) (...)]
-        [(string=? "heritage" bs) (...)]))
+(define (fn-for-buildingstatus bs)
+  (cond [Q1 A1]
+        [Q2 A2]
+        [Q3 A3]))
 ;; Template rules used:
-;;  - one of: 3 cases
-;;  - atomic distinct: "new"
-;;  - atomic distinct: "old"
-;;  - atomic distinct: "heritage"
+;; - one of: 3 cases
+
+
+
 
 ;; =================
 ;; Functions:
 
-;PROBLEM B:
-;
+
 ;The city wants to demolish all buildings classified as "old". 
 ;You are hired to design a function called demolish? 
 ;that determines whether a building should be torn down or not.
+
+
 ;; BuildingStatus -> Boolean
-;; produces true if a given building status is old
-(check-expect (demolish "new") false)
-(check-expect (demolish "old") true)
-(check-expect (demolish "heritage") false)
 
-;; (define (demolish bs) false) ; stub
+;; produce true if a building is old and needs to be torn down
+(check-expect (demolish? "old") true)
+(check-expect (demolish? "new") false)
+(check-expect (demolish? "heritage") false)
 
-(define (demolish bs)
-  (cond [(string=? "new" bs) false]
-        [(string=? "old" bs) true]
-        [(string=? "heritage" bs) false]))
+
+;(define (demolish? bs) false) ;
+;; used template from building status
+
+(define (demolish? bs)
+  (cond [(string=?  bs "new") false]
+        [(string=? bs "heritage") false]
+        [else true]))
+
+;; Templatle rules used:
+;; - one of: 3 cases
+;; - atomic distinct: "new"
+;; - atomic distinct: "old"
+;; - atomic distinct: "heritage"
