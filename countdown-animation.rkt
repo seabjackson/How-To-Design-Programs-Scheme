@@ -64,9 +64,10 @@
 ;; 
 (define (main cd)
   (big-bang cd                        ; Count
-            (on-tick   decrement 1)     ; Count -> Count
-            (to-draw   render)))      ; Count -> Image
-            
+            (on-tick   decrement 1)   ; Count -> Count
+            (to-draw   render)        ; Count -> Image
+            (on-key    handle-key)))  ; Count KeyEvent -> Count
+
 ;; Count -> Count
 ;; produce the next number in the countdown by decrementing it by 1 or keep
 ;; at 0 if already at 0
@@ -92,3 +93,16 @@
 
 (define (render cd)
   (place-image (text (number->string cd) TEXT-SIZE TEXT-COLOR) CTR-X CTR-Y MTS))
+
+;; Count KeyEvent -> Count
+;; reset countdown to beginning when the space key is pressed
+(check-expect (handle-key 5 " ") START)
+(check-expect (handle-key 0 "a") 0)
+(check-expect (handle-key 10 " ") START)
+
+
+;(define (handle-key cd ke) 0) ;stub
+
+(define (handle-key cd ke)
+  (cond [(key=? ke " ") START]
+        [else cd]))
