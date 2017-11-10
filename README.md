@@ -26,3 +26,25 @@ Once that is done, a data definition consists of four or five elements:
 3. An interpretation that describes the correspondence between information and data.
 4. One or more examples of the data.
 5. A template for a 1 argument function operating on data of this type.
+
+HOW T0 DESIGN WORLDS (HTDW)
+
+The How to Design Worlds process provides guidance for designing interactive world programs using big-bang. While some elements of the process are tailored to big-bang, the process can also be adapted to the design of other interactive programs. The wish-list technique can be used in any multi-function program.
+
+World program design is divided into two phases, each of which has sub-parts:
+
+### 1. Domain analysis (use a piece of paper!)
+
+1. Sketch program scenarios
+2. Identify constant information
+3. Identify changing information
+4. Identify big-bang options
+
+### 2.  Build the actual program
+
+1. Constants 
+2. Data definitions using HtDD 
+3. Functions using HtDF
+4. main first 
+5. wish list entriesfor big-bang handlers
+6. Work through wish list until done
