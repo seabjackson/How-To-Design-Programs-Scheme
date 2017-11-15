@@ -14,6 +14,11 @@
 ;(B) Design a function called arrange-images that consumes an arbitrary number
 ;    of images and lays them out left-to-right in increasing order of size.
 
+
+;; Constants
+
+(define BLANK (square 0 "solid" "white"))
+
 ;; ListOfImages is one of: 2 cases
 ;; - empty
 ;; - compound: (cons Image ListOfImage)
@@ -28,3 +33,22 @@
            [else
             (... (first loi)
                  (fn-for-loi (rest loi)))]))
+
+;; Functions:
+
+;; ListOfImage -> Image
+;; sort images in increasing order of size and display them from left to right
+;; sort images in increasing order of size then display them
+
+(check-expect (arrange-images empty) BLANK)
+(check-expect (arrange-images (cons (rectangle 10 15 "solid" "red")
+                                    (cons (rectangle 25 15 "solid" "green") empty)))
+              (beside (rectangle 10 15 "solid" "red")
+                      (rectangle 25 15 "solid" "green")
+                      BLANK))
+
+;(define (arrange-images loi) BLANK); stub
+;; rewriting the puropose suggests this is a function composition problem so we will write the function as such
+
+(define (arrange-images loi)
+  (display-images (sort-images loi)))
