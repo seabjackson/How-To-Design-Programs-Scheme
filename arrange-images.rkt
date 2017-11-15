@@ -40,9 +40,14 @@
 ;; sort images in increasing order of size and display them from left to right
 ;; sort images in increasing order of size then display them
 
-(check-expect (arrange-images empty) BLANK)
 (check-expect (arrange-images (cons (rectangle 10 15 "solid" "red")
                                     (cons (rectangle 25 15 "solid" "green") empty)))
+              (beside (rectangle 10 15 "solid" "red")
+                      (rectangle 25 15 "solid" "green")
+                      BLANK))
+
+(check-expect (arrange-images (cons (rectangle 25 15 "solid" "green")
+                                    (cons (rectangle 10 15 "solid" "red") empty)))
               (beside (rectangle 10 15 "solid" "red")
                       (rectangle 25 15 "solid" "green")
                       BLANK))
@@ -52,3 +57,25 @@
 
 (define (arrange-images loi)
   (display-images (sort-images loi)))
+
+;; ListOfImage -> Image
+;; place images next to each other in order of list
+(check-expect (display-images empty) BLANK)
+(check-expect (display-images  (cons (rectangle 10 15 "solid" "red")
+                                     (cons (rectangle 25 15 "solid" "green") empty)))
+              (beside (rectangle 10 15 "solid" "red")
+                      (rectangle 25 15 "solid" "green")
+                      BLANK))
+
+;(define (display-images loi) BLANK); stub
+
+(define (display-images loi)
+     (cond [(empty? loi) BLANK]
+           [else
+            (beside (first loi)
+                 (display-images (rest loi)))]))
+
+;; ListOfImage -> ListOfImage
+;; prduce a sorted list of images in increasing order of size
+;; !!!
+(define (sort-images loi) loi); stub
