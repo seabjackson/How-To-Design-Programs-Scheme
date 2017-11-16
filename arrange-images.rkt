@@ -22,6 +22,7 @@
 ;; for testing purposes
 (define REC1 (rectangle 10 15 "solid" "red"))
 (define REC2 (rectangle 25 15 "solid" "green"))
+(define REC3 (rectangle 30 40 "solid" "blue"))
 
 ;; ListOfImages is one of: 2 cases
 ;; - empty
@@ -99,12 +100,34 @@
   (cond [(empty? loi) empty]
         [else
          (insert (first loi)
-              (sort-images (rest loi)))]))
+                 (sort-images (rest loi)))]))
 
 ;; Image ListOfImage -> ListOfImage
 ;; produce a new list of images with image in proper place
-;; Assume that list is already sorted
+;; Assume that loi is already sorted
+(check-expect (insert REC1 empty) (cons REC1 empty))
+(check-expect (insert REC1 (cons REC2 (cons REC3 empty))) (cons REC1 (cons REC2 (cons REC3 empty))))
+(check-expect (insert REC2 (cons REC1 (cons REC3 empty))) (cons REC1 (cons REC2 (cons REC3 empty))))
 
+;(define (insert img loi) loi); stub
+(define (insert img loi)
+  (cond [(empty? loi) (cons img empty)]
+        [else
+         (if (larger? img (first loi))
+             (cons (first loi)
+                   (insert img
+                           (rest loi)))
+             (cons img loi))]))
 
-(define (insert img list) list)
+;; Image Image -> Boolean
+;; produces true if first image is larger than second image by area
+(check-expect (larger? (rectangle 3 4 "solid" "red") (rectangle 2 6 "solid" "red")) false)
+(check-expect (larger? (rectangle 5 4 "solid" "red") (rectangle 2 6 "solid" "red")) true)
+(check-expect (larger? (rectangle 3 5 "solid" "red") (rectangle 2 6 "solid" "red")) true)
+(check-expect (larger? (rectangle 3 4 "solid" "red") (rectangle 5 6 "solid" "red")) false)
+(check-expect (larger? (rectangle 3 4 "solid" "red") (rectangle 2 7 "solid" "red")) false)
 
+;(define (larger? img1 img2) true) ; stub
+(define (larger? img1 img2)
+  (> (* (image-width img1) (image-height img1))
+     (* (image-width img2) (image-height img2))))
