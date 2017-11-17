@@ -55,3 +55,7 @@
 
 ;; Constants
 (define TEXT-SIZE 14)
+(define TEXT-COLOR "red")
+(define KEY-VAL-SEPARATOR ":")
+(define H-SPACE (rectangle 10 1 "solid" "white"))
+(define V-SPACE (rectangle  1  10 "solid" "white"))
