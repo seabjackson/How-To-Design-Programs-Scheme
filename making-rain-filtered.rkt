@@ -92,17 +92,99 @@
 
 ;; ListOfDrop Integer Integer MouseEvent -> ListOfDrop
 ;; if mevt is "button-down" add a new drop at that position
-;; !!!
-(define (handle-mouse lod x y mevt) empty) ; stub
+(check-expect (handle-mouse empty 3 12 "button-down")
+              (cons (make-drop 3 12) empty))
+(check-expect (handle-mouse empty 3 12 "drag")
+              empty)
+;<template from MouseEvent>
+
+;(define (handle-mouse lod x y mevt) empty) ; stub
+
+(define (handle-mouse lod x y mevt)
+  (cond [(mouse=? mevt "button-down") (cons (make-drop x y) lod)]
+        [else lod]))
 
 
 ;; ListOfDrop -> ListOfDrop
 ;; produce filtered and ticked list of drops
-;; !!!
-(define (next-drops lod)empty) ; stub
+(check-expect (next-drops empty) empty)
+(check-expect (next-drops (cons (make-drop 3 4)
+                                (cons (make-drop 90 HEIGHT) empty)))
+              (cons (make-drop 3 5) empty))
 
+;(define (next-drops lod) empty) ; stub
+;<template from function composition>
+
+(define (next-drops lod)
+  (onscreen-only (tick-drops lod)))
+
+;; ListOfDrop -> ListOfDrop
+;; produce list of ticked drops 
+(check-expect (tick-drops empty) empty)
+(check-expect (tick-drops (cons (make-drop 3 4)
+                                (cons (make-drop 90 100) empty)))
+              (cons (make-drop 3 (+ SPEED 4))
+                    (cons (make-drop 90 (+ SPEED 100)) empty)))
+
+;<template from ListOfDrop>
+(define (tick-drops lod)
+  (cond [(empty? lod) empty]
+        [else
+         (cons (tick-drop (first lod))
+               (tick-drops (rest lod)))]))
+
+;; Drop -> Drop
+;; produce a new drop that is one pixel farther down the screen
+(check-expect (tick-drop (make-drop 6 9)) (make-drop 6 (+ SPEED 9)))
+
+;<Template from Drop>
+(define (tick-drop d)
+  (make-drop (drop-x d) (+ SPEED (drop-y d))))
+
+;; ListOfDrop -> ListOfDrop
+;; produce a list containing only those drops in lod that are on screen
+(check-expect (onscreen-only empty) empty) 
+(check-expect (onscreen-only (cons (make-drop 3 4)
+                                   (cons (make-drop 1 (+ 1 HEIGHT)) empty)))
+              (cons (make-drop 3 4) empty))
+
+(define (onscreen-only lod)
+  (cond [(empty? lod) empty]
+        [else
+         (if (onscreen? (first lod))
+             (cons (first lod) (onscreen-only (rest lod)))
+             (onscreen-only (rest lod)))]))
+
+;; Drop -> Boolean
+;; produce true if d has not fallen off the screen dimensions of MTS
+(check-expect (onscreen? (make-drop 3  -1)) false)
+(check-expect (onscreen? (make-drop 4 0)) true)
+(check-expect (onscreen? (make-drop 1 (- HEIGHT 1))) true)
+(check-expect (onscreen? (make-drop 3 (+ HEIGHT 4))) false)
+
+(define (onscreen? d)
+  (<= 0 (drop-y d) HEIGHT))
 
 ;; ListOfDrop -> Image
 ;; Render the drops onto MTS
-;; !!!
-(define (render-drops lod) MTS) ; stub
+(check-expect (render-drops empty) MTS)
+(check-expect (render-drops (cons (make-drop 3 10) empty))
+              (place-image DROP 3 10 MTS))
+(check-expect (render-drops (cons (make-drop 3 7) (cons (make-drop 12 30) empty)))
+              (place-image DROP 3 7 (place-image DROP 12 30 MTS)))
+;(define (render-drops lod) MTS) ; stub
+
+(define (render-drops lod)
+  (cond [(empty? lod) MTS]
+        [else
+         (place-drop (first lod)
+                     (render-drops (rest lod)))]))
+
+;; Drop Image -> Image
+;; produce a drop on the image
+(check-expect (place-drop (make-drop 9 5) MTS)
+              (place-image DROP 9 5 MTS))
+; Template from Drop w/ extra atomic parameter
+
+(define (place-drop d img)
+  (place-image DROP (drop-x d) (drop-y d) img))
