@@ -91,11 +91,15 @@
 
 
 ;(define (render-bst t) (square 0 "solid" "white"))
-
+ 
 (define (render-bst t)
-  (cond [(false? t) (...)]
+  (cond [(false? t) MTTREE]
         [else
-         (... (node-key t)    ;Integer
-              (node-val t)    ;String
-              (render-bst (node-l t))
-              (render-bst (node-r t)))]))
+         (above (text (string-append (number->string (node-key t)) KEY-VAL-SEPARATOR (node-val t))
+                      TEXT-SIZE
+                      TEXT-COLOR)
+                V-SPACE
+                (beside
+                (render-bst (node-l t))
+                H-SPACE
+                (render-bst (node-r t))))]))
