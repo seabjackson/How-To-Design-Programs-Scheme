@@ -59,3 +59,43 @@
 (define KEY-VAL-SEPARATOR ":")
 (define H-SPACE (rectangle 10 1 "solid" "white"))
 (define V-SPACE (rectangle  1  10 "solid" "white"))
+(define MTTREE (rectangle 10 20 "solid" "white"))
+
+;; BST -> Image
+;; given a Binary Search Tree produce a simple rendering of its structure
+
+(check-expect (render-bst false) MTTREE)
+(check-expect (render-bst BST1) (above (text (string-append "1" KEY-VAL-SEPARATOR "abc")
+                                             TEXT-SIZE
+                                             TEXT-COLOR)
+                                       V-SPACE
+                                       (beside (render-bst false)
+                                               H-SPACE
+                                               (render-bst false))))
+
+(check-expect (render-bst BST4) (above (text (string-append "4" KEY-VAL-SEPARATOR "dcj")
+                                             TEXT-SIZE
+                                             TEXT-COLOR)
+                                       V-SPACE
+                                       (beside (render-bst false)
+                                               H-SPACE
+                                               (render-bst (make-node 7 "ruf" false false)))))
+
+(check-expect (render-bst BST3) (above (text (string-append "3" KEY-VAL-SEPARATOR "ilk")
+                                             TEXT-SIZE
+                                             TEXT-COLOR)
+                                       V-SPACE
+                                       (beside (render-bst BST1)
+                                               H-SPACE
+                                               (render-bst BST4))))
+
+
+;(define (render-bst t) (square 0 "solid" "white"))
+
+(define (render-bst t)
+  (cond [(false? t) (...)]
+        [else
+         (... (node-key t)    ;Integer
+              (node-val t)    ;String
+              (render-bst (node-l t))
+              (render-bst (node-r t)))]))
