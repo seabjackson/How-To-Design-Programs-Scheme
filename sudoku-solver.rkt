@@ -203,7 +203,29 @@
 ;; Functions:
 
 
+;; Board -> Board or false
+;; produce a solution for bd; or false if bd is unsolvable
+;; Assume: bd is valid
+(check-expect (solve BD4) BD4s)
+(check-expect (solve BD5) BD5s)
+(check-expect (solve BD7) false)
 
+(define (solve bd) false); stub
+
+(define (solve bd)
+  (local [(define (solve--bd bd)
+            (if (solved? bd)
+                bd
+                (solve--lobd (next-boards bd))))
+          
+          (define (solve--lobd lobd)
+            (cond [(empty? lobd) false]
+                  [else
+                   (local [(define try (solve--bd (first lobd)))]
+                     (if (not (false? try))
+                         try
+                        (solve--lobd (rest lobd))))]))]
+    (solve--bd bd)))
 
 ;; Board Pos -> Val or false
 ;; Produce value at given position on board.
