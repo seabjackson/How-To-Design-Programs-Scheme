@@ -230,7 +230,7 @@
 ;; Board -> Boolean
 ;; produce true if board is solved
 ;; Assume board is valid, so it is solved if it is full
-(check-expect (solved? BD1) true)
+(check-expect (solved? BD1) false)
 (check-expect (solved? BD4) false)
 (check-expect (solved? BD4s) true)
 
@@ -261,69 +261,135 @@
 ;; Board -> Pos
 ;; consumed a board and finds the position of the first blank square
 ;; Assume board has at least one blank square
-;!!!
-(define (find-blank bd) 0) ; stub
+(check-expect (find-blank BD1) 0)
+(check-expect (find-blank (cons 2 (rest BD1))) 1)
+(check-expect (find-blank (cons 2 (cons 4 (rest (rest BD1))))) 2)
+;(define (find-blank bd) 0) ; stub
+
+(define (find-blank bd)
+  (cond [(empty? bd) (error "The board didn't have a blank space.")]
+        [else
+         (if (false? (first bd))
+             0
+             (+ 1 (find-blank (rest bd))))]))
 
 ;; Pos Board -> (listof Board)
 ;; produce 9 boards, with blank filled from Natural[1, 9]
-;;!!!
-(define (fill-with-num p bd) empty); stub
+(check-expect (fill-with-num 0 BD1)
+              (list (cons 1 (rest BD1))
+                    (cons 2 (rest BD1))
+                    (cons 3 (rest BD1))
+                    (cons 4 (rest BD1))
+                    (cons 5 (rest BD1))
+                    (cons 6 (rest BD1))
+                    (cons 7 (rest BD1))
+                    (cons 8 (rest BD1))
+                    (cons 9 (rest BD1))))
+
+;(define (fill-with-num p bd) empty); stub
+
+(define (fill-with-num p bd)
+  (local [(define (build-one n)
+            (fill-square bd p (+ n 1)))]
+    (build-list 9 build-one)))
 
 ;; (listof Board) -> (listof Board)
 ;;produce list containing only valid boards
-;;!!!
-(define (keep-only-valid lobd) empty); stub
+(check-expect (keep-only-valid (list (cons 1 (cons 1 (rest (rest BD1)))))) empty)
 
-;; Board Pos -> Val or false
-;; Produce value at given position on board.
-(check-expect (read-square BD2 (r-c->pos 0 5)) 6)
-(check-expect (read-square BD3 (r-c->pos 7 0)) 8) 
+;(define (keep-only-valid lobd) empty); stub
+(define (keep-only-valid lobd)
+  (filter valid-board? lobd))
 
-(define (read-square bd p)
-  (list-ref bd p))               
+;; Board -> Boolean
+;; produce true if no unit on the board has the same value twice, false otherwise
+(check-expect (valid-board? BD1) true)
+(check-expect (valid-board? BD2) true)
+(check-expect (valid-board? BD3) true)
+(check-expect (valid-board? BD4) true)
+(check-expect (valid-board? BD5) true)
+(check-expect (valid-board? (cons 2 (rest BD2))) false)
+(check-expect (valid-board? (fill-square BD4 1 6)) false)
+
+(define (valid-board? bd)
+  (local [(define (valid-units? lou)
+            (andmap valid-unit? lou))
+          
+          (define (valid-unit? u) ; produce contents of board at p
+            (no-duplicates?
+             (keep-only-values
+              (read-unit u))))
+
+          (define (read-unit u)
+            (map read-pos u))
+          
+          (define (read-pos p)
+            (read-square bd p))
+
+          (define (keep-only-values lovf)
+            (filter number? lovf))
+
+          (define (no-duplicates? lov)
+            (cond [(empty? lov) true]
+                  [else
+                   (if (member (first lov) (rest lov))
+                       false
+                       (no-duplicates? (rest lov)))]))]
+    (valid-units? UNITS)))
+
+    
+
+  ;; Board Pos -> Val or false
+  ;; Produce value at given position on board.
+  (check-expect (read-square BD2 (r-c->pos 0 5)) 6)
+  (check-expect (read-square BD3 (r-c->pos 7 0)) 8) 
+
+  (define (read-square bd p)
+    (list-ref bd p))               
 
 
-;; Board Pos Val -> Board
-;; produce new board with val at given position
-(check-expect (fill-square BD1 (r-c->pos 0 0) 1)
-              (cons 1 (rest BD1)))
+  ;; Board Pos Val -> Board
+  ;; produce new board with val at given position
+  (check-expect (fill-square BD1 (r-c->pos 0 0) 1)
+                (cons 1 (rest BD1)))
 
-(define (fill-square bd p nv)
-  (append (take bd p)
-          (list nv)
-          (drop bd (add1 p))))
+  (define (fill-square bd p nv)
+    (append (take bd p)
+            (list nv)
+            (drop bd (add1 p))))
 
-;
-;We could have coded read-square and fill-square 'from scratch'
-;by using the functions operating on 2 one-of data rule. If we 
-;had, the function definitions would look like this:
-;
-;
-;Function on 2 complex data: Board and Pos.
-;We can assume that p is <= (length bd).
-;
-;              empty     (cons Val-or-False Board)
-; 0             XXX         (first bd)
-; 
-; (add1 p)      XXX         <natural recursion>
-;
-;(define (read-square bd p)  
-;  (cond [(zero? p) (first bd)]
-;        [else
-;         (read-square (rest bd) (sub1 p))]))
-;
-;
-;
-;Function on 2 complex data, Board and Pos.
-;We can assume that p is <= (length bd).
-;
-;              empty     (cons Val-or-False Board)
-; 0             XXX         (cons nv (rest bd))
-; 
-; (add1 p)      XXX         (cons (first bd) <natural recursion>)
-;(define (fill-square bd p nv)  
-;  (cond [(zero? p) (cons nv (rest bd))]
-;        [else
-;         (cons (first bd)
-;               (fill-square (rest bd) (sub1 p) nv))]))
+  ;
+  ;We could have coded read-square and fill-square 'from scratch'
+  ;by using the functions operating on 2 one-of data rule. If we 
+  ;had, the function definitions would look like this:
+  ;
+  ;
+  ;Function on 2 complex data: Board and Pos.
+  ;We can assume that p is <= (length bd).
+  ;
+  ;              empty     (cons Val-or-False Board)
+  ; 0             XXX         (first bd)
+  ; 
+  ; (add1 p)      XXX         <natural recursion>
+  ;
+  ;(define (read-square bd p)  
+  ;  (cond [(zero? p) (first bd)]
+  ;        [else
+  ;         (read-square (rest bd) (sub1 p))]))
+  ;
+  ;
+  ;
+  ;Function on 2 complex data, Board and Pos.
+  ;We can assume that p is <= (length bd).
+  ;
+  ;              empty     (cons Val-or-False Board)
+  ; 0             XXX         (cons nv (rest bd))
+  ; 
+  ; (add1 p)      XXX         (cons (first bd) <natural recursion>)
+  ;(define (fill-square bd p nv)  
+  ;  (cond [(zero? p) (cons nv (rest bd))]
+  ;        [else
+  ;         (cons (first bd)
+  ;               (fill-square (rest bd) (sub1 p) nv))]))
 
+  
