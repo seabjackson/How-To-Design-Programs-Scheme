@@ -210,7 +210,7 @@
 (check-expect (solve BD5) BD5s)
 (check-expect (solve BD7) false)
 
-(define (solve bd) false); stub
+;(define (solve bd) false); stub
 
 (define (solve bd)
   (local [(define (solve--bd bd)
@@ -224,13 +224,60 @@
                    (local [(define try (solve--bd (first lobd)))]
                      (if (not (false? try))
                          try
-                        (solve--lobd (rest lobd))))]))]
+                         (solve--lobd (rest lobd))))]))]
     (solve--bd bd)))
+
+;; Board -> Boolean
+;; produce true if board is solved
+;; Assume board is valid, so it is solved if it is full
+(check-expect (solved? BD1) true)
+(check-expect (solved? BD4) false)
+(check-expect (solved? BD4s) true)
+
+;(define (solved? bd) false) ; stub
+
+(define (solved? bd)
+  (andmap number? bd))
+
+
+
+;; Board -> (listof Board)
+;; produce list of valid next boards from board
+;; finds first empty square, fills it with Natural[1,9], keeps only valid boards
+(check-expect (next-boards (cons 1 (rest BD1)))
+              (list (cons 1 (cons 2 (rest (rest BD1))))
+                    (cons 1 (cons 3 (rest (rest BD1))))
+                    (cons 1 (cons 4 (rest (rest BD1))))
+                    (cons 1 (cons 5 (rest (rest BD1))))
+                    (cons 1 (cons 6 (rest (rest BD1))))
+                    (cons 1 (cons 7 (rest (rest BD1))))
+                    (cons 1 (cons 8 (rest (rest BD1))))
+                    (cons 1 (cons 9 (rest (rest BD1))))))
+               
+;(define (next-boards bd) empty); stub
+(define (next-boards bd)
+  (keep-only-valid (fill-with-num (find-blank bd) bd)))
+
+;; Board -> Pos
+;; consumed a board and finds the position of the first blank square
+;; Assume board has at least one blank square
+;!!!
+(define (find-blank bd) 0) ; stub
+
+;; Pos Board -> (listof Board)
+;; produce 9 boards, with blank filled from Natural[1, 9]
+;;!!!
+(define (fill-with-num p bd) empty); stub
+
+;; (listof Board) -> (listof Board)
+;;produce list containing only valid boards
+;;!!!
+(define (keep-only-valid lobd) empty); stub
 
 ;; Board Pos -> Val or false
 ;; Produce value at given position on board.
 (check-expect (read-square BD2 (r-c->pos 0 5)) 6)
-(check-expect (read-square BD3 (r-c->pos 7 0)) 8)
+(check-expect (read-square BD3 (r-c->pos 7 0)) 8) 
 
 (define (read-square bd p)
   (list-ref bd p))               
